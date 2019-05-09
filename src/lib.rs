@@ -72,10 +72,7 @@ pub struct Position {
 
 impl Position {
     pub fn new(line: u64, character: u64) -> Position {
-        Position {
-            line: line,
-            character: character,
-        }
+        Position { line, character }
     }
 }
 
@@ -91,9 +88,18 @@ pub struct Range {
 
 impl Range {
     pub fn new(start: Position, end: Position) -> Range {
+        Range { start, end }
+    }
+
+    pub fn new_simple(
+        start_line: u64,
+        start_character: u64,
+        end_line: u64,
+        end_character: u64,
+    ) -> Self {
         Range {
-            start: start,
-            end: end,
+            start: Position::new(start_line, start_character),
+            end: Position::new(end_line, end_character),
         }
     }
 }
