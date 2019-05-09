@@ -1487,7 +1487,7 @@ pub struct CompletionOptions {
 
     /// The characters that trigger completion automatically.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub trigger_characters: Option<Vec<String>>,
+    pub trigger_characters: Option<Vec<char>>,
 }
 
 /// Signature help options.
@@ -1496,7 +1496,7 @@ pub struct CompletionOptions {
 pub struct SignatureHelpOptions {
     /// The characters that trigger signature help automatically.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub trigger_characters: Option<Vec<String>>,
+    pub trigger_characters: Option<Vec<char>>,
 }
 
 /// Code Lens options.
@@ -1513,11 +1513,11 @@ pub struct CodeLensOptions {
 #[serde(rename_all = "camelCase")]
 pub struct DocumentOnTypeFormattingOptions {
     /// A character on which formatting should be triggered, like `}`.
-    pub first_trigger_character: String,
+    pub first_trigger_character: char,
 
     /// More trigger characters.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub more_trigger_character: Option<Vec<String>>,
+    pub more_trigger_character: Option<Vec<char>>,
 }
 
 /// Execute command options.
@@ -2236,7 +2236,7 @@ pub struct CompletionContext {
      * Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
      */
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub trigger_character: Option<String>,
+    pub trigger_character: Option<char>,
 }
 
 /// How a completion was triggered.
@@ -3090,7 +3090,7 @@ pub struct DocumentOnTypeFormattingParams {
     pub position: Position,
 
     /// The character that has been typed.
-    pub ch: String,
+    pub ch: char,
 
     /// The format options.
     pub options: FormattingOptions,
@@ -3109,13 +3109,13 @@ pub struct DocumentOnTypeFormattingRegistrationOptions {
     /**
      * A character on which formatting should be triggered, like `}`.
      */
-    pub first_trigger_character: String,
+    pub first_trigger_character: char,
 
     /**
      * More trigger characters.
      */
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub more_trigger_character: Option<Vec<String>>,
+    pub more_trigger_character: Option<Vec<char>>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
