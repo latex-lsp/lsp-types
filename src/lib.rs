@@ -1704,6 +1704,10 @@ pub struct ServerCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rename_provider: Option<RenameProviderCapability>,
 
+    /// The server provides document link support.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub document_link_provider: Option<DocumentLinkOptions>,
+
     /// The server provides color provider support.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color_provider: Option<ColorProviderCapability>,
@@ -3139,6 +3143,14 @@ pub struct RenameCapability {
     /// Client supports testing for validity of rename operations before execution.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub prepare_support: Option<bool>,
+}
+
+#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DocumentLinkOptions {
+    /// Document links have a resolve provider as well.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub resolve_provider: Option<bool>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
