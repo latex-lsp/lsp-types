@@ -102,6 +102,14 @@ impl Range {
             end: Position::new(end_line, end_character),
         }
     }
+
+    pub fn contains(&self, position: Position) -> bool {
+        position >= self.start && position <= self.end
+    }
+
+    pub fn contains_exclusive(&self, position: Position) -> bool {
+        position > self.start && position < self.end
+    }
 }
 
 /// Represents a location inside a resource, such as a line inside a text file.
