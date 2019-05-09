@@ -29,7 +29,7 @@ extern crate serde_json;
 extern crate url;
 extern crate url_serde;
 
-pub use url::Url;
+pub use url::Url as Uri;
 
 use std::collections::HashMap;
 
@@ -116,12 +116,12 @@ impl Range {
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct Location {
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
     pub range: Range,
 }
 
 impl Location {
-    pub fn new(uri: Url, range: Range) -> Location {
+    pub fn new(uri: Uri, range: Range) -> Location {
         Location {
             uri: uri,
             range: range,
@@ -142,7 +142,7 @@ pub struct LocationLink {
 
     /// The target resource identifier of this link.
     #[serde(with = "url_serde")]
-    pub target_uri: Url,
+    pub target_uri: Uri,
 
     /// The full target range of this link.
     pub target_range: Range,
@@ -372,7 +372,7 @@ pub struct CreateFile {
      * The resource to create.
      */
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
     /**
      * Additional options
      */
@@ -408,12 +408,12 @@ pub struct RenameFile {
      * The old (existing) location.
      */
     #[serde(with = "url_serde")]
-    pub old_uri: Url,
+    pub old_uri: Uri,
     /**
      * The new location.
      */
     #[serde(with = "url_serde")]
-    pub new_uri: Url,
+    pub new_uri: Uri,
     /**
      * Rename options.
      */
@@ -449,7 +449,7 @@ pub struct DeleteFile {
      * The file to delete.
      */
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
     /**
      * Delete options.
      */
@@ -465,7 +465,7 @@ pub struct WorkspaceEdit {
     #[serde(with = "url_map")]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
-    pub changes: Option<HashMap<Url, Vec<TextEdit>>>, //    changes?: { [uri: string]: TextEdit[]; };
+    pub changes: Option<HashMap<Uri, Vec<TextEdit>>>, //    changes?: { [uri: string]: TextEdit[]; };
 
     /**
      * Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
@@ -545,13 +545,13 @@ mod url_map {
 
     pub fn deserialize<'de, D>(
         deserializer: D,
-    ) -> Result<Option<HashMap<Url, Vec<TextEdit>>>, D::Error>
+    ) -> Result<Option<HashMap<Uri, Vec<TextEdit>>>, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        struct UrlMapVisitor;
-        impl<'de> de::Visitor<'de> for UrlMapVisitor {
-            type Value = HashMap<Url, Vec<TextEdit>>;
+        struct UriMapVisitor;
+        impl<'de> de::Visitor<'de> for UriMapVisitor {
+            type Value = HashMap<Uri, Vec<TextEdit>>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("map")
@@ -565,7 +565,7 @@ mod url_map {
 
                 // While there are entries remaining in the input, add them
                 // into our map.
-                while let Some((key, value)) = visitor.next_entry::<url_serde::De<Url>, _>()? {
+                while let Some((key, value)) = visitor.next_entry::<url_serde::De<Uri>, _>()? {
                     values.insert(key.into_inner(), value);
                 }
 
@@ -573,9 +573,9 @@ mod url_map {
             }
         }
 
-        struct OptionUrlMapVisitor;
-        impl<'de> de::Visitor<'de> for OptionUrlMapVisitor {
-            type Value = Option<HashMap<Url, Vec<TextEdit>>>;
+        struct OptionUriMapVisitor;
+        impl<'de> de::Visitor<'de> for OptionUriMapVisitor {
+            type Value = Option<HashMap<Uri, Vec<TextEdit>>>;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("option")
@@ -602,17 +602,17 @@ mod url_map {
             where
                 D: serde::Deserializer<'de>,
             {
-                deserializer.deserialize_map(UrlMapVisitor).map(Some)
+                deserializer.deserialize_map(UriMapVisitor).map(Some)
             }
         }
 
         // Instantiate our Visitor and ask the Deserializer to drive
         // it over the input data, resulting in an instance of MyMap.
-        deserializer.deserialize_option(OptionUrlMapVisitor)
+        deserializer.deserialize_option(OptionUriMapVisitor)
     }
 
     pub fn serialize<S>(
-        changes: &Option<HashMap<Url, Vec<TextEdit>>>,
+        changes: &Option<HashMap<Uri, Vec<TextEdit>>>,
         serializer: S,
     ) -> Result<S::Ok, S::Error>
     where
@@ -634,7 +634,7 @@ mod url_map {
 }
 
 impl WorkspaceEdit {
-    pub fn new(changes: HashMap<Url, Vec<TextEdit>>) -> WorkspaceEdit {
+    pub fn new(changes: HashMap<Uri, Vec<TextEdit>>) -> WorkspaceEdit {
         WorkspaceEdit {
             changes: Some(changes),
             document_changes: None,
@@ -651,11 +651,11 @@ pub struct TextDocumentIdentifier {
     // so any changes to this type must be effected in the sub-type as well.
     /// The text document's URI.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
 }
 
 impl TextDocumentIdentifier {
-    pub fn new(uri: Url) -> TextDocumentIdentifier {
+    pub fn new(uri: Uri) -> TextDocumentIdentifier {
         TextDocumentIdentifier { uri: uri }
     }
 }
@@ -666,7 +666,7 @@ impl TextDocumentIdentifier {
 pub struct TextDocumentItem {
     /// The text document's URI.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
 
     /// The text document's language identifier.
     pub language_id: String,
@@ -680,7 +680,7 @@ pub struct TextDocumentItem {
 }
 
 impl TextDocumentItem {
-    pub fn new(uri: Url, language_id: String, version: u64, text: String) -> TextDocumentItem {
+    pub fn new(uri: Uri, language_id: String, version: u64, text: String) -> TextDocumentItem {
         TextDocumentItem {
             uri: uri,
             language_id: language_id,
@@ -696,14 +696,14 @@ pub struct VersionedTextDocumentIdentifier {
     // This field was "mixed-in" from TextDocumentIdentifier
     /// The text document's URI.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
 
     /// The version number of this document.
     pub version: Option<u64>,
 }
 
 impl VersionedTextDocumentIdentifier {
-    pub fn new(uri: Url, version: u64) -> VersionedTextDocumentIdentifier {
+    pub fn new(uri: Uri, version: u64) -> VersionedTextDocumentIdentifier {
         VersionedTextDocumentIdentifier {
             uri: uri,
             version: Some(version),
@@ -788,7 +788,7 @@ pub struct InitializeParams {
     /// `rootUri` wins.
     #[serde(with = "option_url")]
     #[serde(default)]
-    pub root_uri: Option<Url>,
+    pub root_uri: Option<Uri>,
 
     /// User provided initialization options.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -831,18 +831,18 @@ impl Default for TraceOption {
 
 mod option_url {
     use serde::{self, Serialize};
-    use url::Url;
+    use url::Url as Uri;
     use url_serde::{De, Ser};
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<Url>, D::Error>
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<Uri>, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         serde::Deserialize::deserialize(deserializer)
-            .map(|x: Option<De<Url>>| x.map(|url| url.into_inner()))
+            .map(|x: Option<De<Uri>>| x.map(|url| url.into_inner()))
     }
 
-    pub fn serialize<S>(self_: &Option<Url>, serializer: S) -> Result<S::Ok, S::Error>
+    pub fn serialize<S>(self_: &Option<Uri>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
@@ -924,7 +924,7 @@ pub enum WorkspaceFolderCapabilityChangeNotifications {
 pub struct WorkspaceFolder {
     /// The associated URI for this workspace folder.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
     /// The name of the workspace folder. Defaults to the uri's basename.
     pub name: String,
 }
@@ -2116,7 +2116,7 @@ impl serde::Serialize for FileChangeType {
 pub struct FileEvent {
     /// The file's URI.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
 
     /// The change type.
     #[serde(rename = "type")]
@@ -2124,7 +2124,7 @@ pub struct FileEvent {
 }
 
 impl FileEvent {
-    pub fn new(uri: Url, typ: FileChangeType) -> FileEvent {
+    pub fn new(uri: Uri, typ: FileChangeType) -> FileEvent {
         FileEvent { uri: uri, typ: typ }
     }
 }
@@ -2184,14 +2184,14 @@ impl serde::Serialize for WatchKind {
 pub struct PublishDiagnosticsParams {
     /// The URI for which diagnostic information is reported.
     #[serde(with = "url_serde")]
-    pub uri: Url,
+    pub uri: Uri,
 
     /// An array of diagnostic information items.
     pub diagnostics: Vec<Diagnostic>,
 }
 
 impl PublishDiagnosticsParams {
-    pub fn new(uri: Url, diagnostics: Vec<Diagnostic>) -> PublishDiagnosticsParams {
+    pub fn new(uri: Uri, diagnostics: Vec<Diagnostic>) -> PublishDiagnosticsParams {
         PublishDiagnosticsParams {
             uri: uri,
             diagnostics: diagnostics,
@@ -3030,7 +3030,7 @@ pub struct DocumentLink {
      * The uri this link points to.
      */
     #[serde(with = "url_serde")]
-    pub target: Url,
+    pub target: Uri,
 }
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
@@ -3515,7 +3515,7 @@ mod tests {
         test_serialization(
             &WorkspaceEdit {
                 changes: Some(
-                    vec![(Url::parse("file://test").unwrap(), vec![])]
+                    vec![(Uri::parse("file://test").unwrap(), vec![])]
                         .into_iter()
                         .collect(),
                 ),
