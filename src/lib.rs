@@ -37,6 +37,7 @@ use num_traits::FromPrimitive;
 use serde::de;
 use serde::de::Error as Error_;
 use serde_json::Value;
+use std::borrow::Cow;
 
 pub mod notification;
 pub mod request;
@@ -171,10 +172,10 @@ pub struct Diagnostic {
     /// A human-readable string describing the source of this
     /// diagnostic, e.g. 'typescript' or 'super lint'.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub source: Option<String>,
+    pub source: Option<Cow<'static, str>>,
 
     /// The diagnostic's message.
-    pub message: String,
+    pub message: Cow<'static, str>,
 
     /// An array of related diagnostic information, e.g. when symbol-names within
     /// a scope collide all definitions can be marked via this property.
@@ -187,8 +188,8 @@ impl Diagnostic {
         range: Range,
         severity: Option<DiagnosticSeverity>,
         code: Option<NumberOrString>,
-        source: Option<String>,
-        message: String,
+        source: Option<Cow<'static, str>>,
+        message: Cow<'static, str>,
         related_information: Option<Vec<DiagnosticRelatedInformation>>,
     ) -> Diagnostic {
         Diagnostic {
@@ -201,7 +202,7 @@ impl Diagnostic {
         }
     }
 
-    pub fn new_simple(range: Range, message: String) -> Diagnostic {
+    pub fn new_simple(range: Range, message: Cow<'static, str>) -> Diagnostic {
         Self::new(range, None, None, None, message, None)
     }
 
@@ -209,8 +210,8 @@ impl Diagnostic {
         range: Range,
         severity: DiagnosticSeverity,
         code_number: u64,
-        source: Option<String>,
-        message: String,
+        source: Option<Cow<'static, str>>,
+        message: Cow<'static, str>,
     ) -> Diagnostic {
         let code = Some(NumberOrString::Number(code_number));
         Self::new(range, Some(severity), code, source, message, None)
@@ -239,7 +240,7 @@ pub struct DiagnosticRelatedInformation {
     pub location: Location,
 
     /// The message of this related diagnostic information.
-    pub message: String,
+    pub message: Cow<'static, str>,
 }
 
 impl<'de> serde::Deserialize<'de> for DiagnosticSeverity {
@@ -311,11 +312,11 @@ pub struct TextEdit {
     pub range: Range,
     /// The string to be inserted. For delete operations use an
     /// empty string.
-    pub new_text: String,
+    pub new_text: Cow<'static, str>,
 }
 
 impl TextEdit {
-    pub fn new(range: Range, new_text: String) -> TextEdit {
+    pub fn new(range: Range, new_text: Cow<'static, str>) -> TextEdit {
         TextEdit {
             range: range,
             new_text: new_text,
@@ -531,11 +532,11 @@ pub struct ConfigurationParams {
 pub struct ConfigurationItem {
     /// The scope to get the configuration section for.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub scope_uri: Option<String>,
+    pub scope_uri: Option<Cow<'static, str>>,
 
     ///The configuration section asked for.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub section: Option<String>,
+    pub section: Option<Cow<'static, str>>,
 }
 
 mod url_map {
@@ -1746,7 +1747,7 @@ pub struct ShowMessageParams {
     pub typ: MessageType,
 
     /// The actual message.
-    pub message: String,
+    pub message: Cow<'static, str>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -1797,7 +1798,7 @@ pub struct ShowMessageRequestParams {
     pub typ: MessageType,
 
     /// The actual message
-    pub message: String,
+    pub message: Cow<'static, str>,
 
     /// The message action items to present.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1807,7 +1808,7 @@ pub struct ShowMessageRequestParams {
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub struct MessageActionItem {
     /// A short title like 'Retry', 'Open Log' etc.
-    pub title: String,
+    pub title: Cow<'static, str>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -1817,7 +1818,7 @@ pub struct LogMessageParams {
     pub typ: MessageType,
 
     /// The actual message
-    pub message: String,
+    pub message: Cow<'static, str>,
 }
 
 /**
@@ -1830,12 +1831,12 @@ pub struct Registration {
      * The id used to register the request. The id can be used to deregister
      * the request again.
      */
-    pub id: String,
+    pub id: Cow<'static, str>,
 
     /**
      * The method / capability to register for.
      */
-    pub method: String,
+    pub method: Cow<'static, str>,
 
     /**
      * Options necessary for the registration.
@@ -1907,12 +1908,12 @@ pub struct Unregistration {
      * The id used to unregister the request or notification. Usually an id
      * provided during the register request.
      */
-    pub id: String,
+    pub id: Cow<'static, str>,
 
     /**
      * The method / capability to unregister for.
      */
-    pub method: String,
+    pub method: Cow<'static, str>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -2140,7 +2141,7 @@ pub struct DidChangeWatchedFilesRegistrationOptions {
 #[serde(rename_all = "camelCase")]
 pub struct FileSystemWatcher {
     /// The  glob pattern to watch
-    pub glob_pattern: String,
+    pub glob_pattern: Cow<'static, str>,
 
     /// The kind of events of interest. If omitted it defaults to WatchKind.Create |
     /// WatchKind.Change | WatchKind.Delete which is 7.
@@ -2296,7 +2297,7 @@ pub struct CompletionItem {
     /// The label of this completion item. By default
     /// also the text that is inserted when selecting
     /// this completion.
-    pub label: String,
+    pub label: Cow<'static, str>,
 
     /// The kind of this completion item. Based of the kind
     /// an icon is chosen by the editor.
@@ -2306,7 +2307,7 @@ pub struct CompletionItem {
     /// A human-readable string with additional information
     /// about this item, like type or symbol information.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub detail: Option<String>,
+    pub detail: Option<Cow<'static, str>>,
 
     /// A human-readable string that represents a doc-comment.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2323,17 +2324,17 @@ pub struct CompletionItem {
     /// A string that shoud be used when comparing this item
     /// with other items. When `falsy` the label is used.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub sort_text: Option<String>,
+    pub sort_text: Option<Cow<'static, str>>,
 
     /// A string that should be used when filtering a set of
     /// completion items. When `falsy` the label is used.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub filter_text: Option<String>,
+    pub filter_text: Option<Cow<'static, str>>,
 
     /// A string that should be inserted a document when selecting
     /// this completion. When `falsy` the label is used.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub insert_text: Option<String>,
+    pub insert_text: Option<Cow<'static, str>>,
 
     /// The format of the insert text. The format applies to both the `insertText` property
     /// and the `newText` property of a provided `textEdit`.
@@ -2366,7 +2367,7 @@ pub struct CompletionItem {
 
 impl CompletionItem {
     /// Create a CompletionItem with the minimum possible info (label and detail).
-    pub fn new_simple(label: String, detail: String) -> CompletionItem {
+    pub fn new_simple(label: Cow<'static, str>, detail: Cow<'static, str>) -> CompletionItem {
         CompletionItem {
             label: label,
             detail: Some(detail),
@@ -2693,11 +2694,11 @@ pub struct DocumentSymbolParams {
 #[serde(rename_all = "camelCase")]
 pub struct DocumentSymbol {
     /// The name of this symbol.
-    pub name: String,
+    pub name: Cow<'static, str>,
     /// More detail for this symbol, e.g the signature of a function. If not provided the
     /// name is used.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub detail: Option<String>,
+    pub detail: Option<Cow<'static, str>>,
     /// The kind of this symbol.
     pub kind: SymbolKind,
     /// Indicates if this symbol is deprecated.
@@ -2721,7 +2722,7 @@ pub struct DocumentSymbol {
 #[serde(rename_all = "camelCase")]
 pub struct SymbolInformation {
     /// The name of this symbol.
-    pub name: String,
+    pub name: Cow<'static, str>,
 
     /// The kind of this symbol.
     pub kind: SymbolKind,
@@ -2735,7 +2736,7 @@ pub struct SymbolInformation {
 
     /// The name of the symbol containing this symbol.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub container_name: Option<String>,
+    pub container_name: Option<Cow<'static, str>>,
 }
 
 /// A symbol kind.
@@ -2930,12 +2931,12 @@ pub mod code_action_kind {
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct CodeAction {
     /// A short, human-readable, title for this code action.
-    pub title: String,
+    pub title: Cow<'static, str>,
 
     /// The kind of the code action.
     /// Used to filter code actions.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub kind: Option<String>,
+    pub kind: Option<Cow<'static, str>>,
 
     /// The diagnostics that this code action resolves.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -3419,7 +3420,7 @@ pub enum MarkupKind {
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone)]
 pub struct MarkupContent {
     pub kind: MarkupKind,
-    pub value: String,
+    pub value: Cow<'static, str>,
 }
 
 #[cfg(feature = "proposed")]
@@ -3429,18 +3430,18 @@ pub struct MarkupContent {
 pub struct ProgressParams {
     /// A unique identifier to associate multiple progress notifications
     /// with the same progress.
-    pub id: String,
+    pub id: Cow<'static, str>,
 
     /// Mandatory title of the progress operation. Used to briefly inform
     /// about the kind of operation being performed.
     /// Examples: "Indexing" or "Linking dependencies".
-    pub title: String,
+    pub title: Cow<'static, str>,
 
     /// Optional, more detailed associated progress message. Contains
     /// complementary information to the `title`.
     /// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
     /// If unset, the previous progress message (if any) is still valid.
-    pub message: Option<String>,
+    pub message: Option<Cow<'static, str>>,
 
     /// Optional progress percentage to display (value 100 is considered 100%).
     /// If unset, the previous progress percentage (if any) is still valid.
