@@ -21,8 +21,9 @@ extern crate bitflags;
 #[macro_use]
 extern crate num_derive;
 extern crate num_traits;
-#[macro_use]
 extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 extern crate serde_json;
 
 extern crate url;
@@ -37,7 +38,6 @@ use serde::de;
 use serde::de::Error as Error_;
 use serde_json::Value;
 use std::borrow::Cow;
-use std::sync::Arc;
 
 pub mod notification;
 pub mod request;
@@ -2281,7 +2281,7 @@ pub struct CompletionList {
     pub is_incomplete: bool,
 
     /// The completion items.
-    pub items: Vec<Arc<CompletionItem>>,
+    pub items: Vec<CompletionItem>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone)]
