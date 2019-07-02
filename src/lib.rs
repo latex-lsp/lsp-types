@@ -3424,32 +3424,110 @@ pub struct MarkupContent {
 }
 
 #[cfg(feature = "proposed")]
-/// The progress notification is sent from the server to the client to ask
-/// the client to indicate progress.
+/// The `window/progress/start` notification is sent from the server to the client
+/// to ask the client to start progress.
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
-pub struct ProgressParams {
-    /// A unique identifier to associate multiple progress notifications
-    /// with the same progress.
+pub struct ProgressStartParams {
+    /**
+     * A unique identifier to associate multiple progress notifications with
+     * the same progress.
+     */
     pub id: Cow<'static, str>,
 
-    /// Mandatory title of the progress operation. Used to briefly inform
-    /// about the kind of operation being performed.
-    /// Examples: "Indexing" or "Linking dependencies".
+    /**
+     * Mandatory title of the progress operation. Used to briefly inform about
+     * the kind of operation being performed.
+     *
+     * Examples: "Indexing" or "Linking dependencies".
+     */
     pub title: Cow<'static, str>,
 
-    /// Optional, more detailed associated progress message. Contains
-    /// complementary information to the `title`.
-    /// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
-    /// If unset, the previous progress message (if any) is still valid.
+    /**
+     * Controls if a cancel button should show to allow the user to cancel the
+     * long running operation. Clients that don't support cancellation are allowed
+     * to ignore the setting.
+     */
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cancellable: Option<bool>,
+
+    /**
+     * Optional, more detailed associated progress message. Contains
+     * complementary information to the `title`.
+     *
+     * Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
+     * If unset, the previous progress message (if any) is still valid.
+     */
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<Cow<'static, str>>,
 
-    /// Optional progress percentage to display (value 100 is considered 100%).
-    /// If unset, the previous progress percentage (if any) is still valid.
+    /**
+     * Optional progress percentage to display (value 100 is considered 100%).
+     * If not provided infinite progress is assumed and clients are allowed
+     * to ignore the `percentage` value in subsequent in report notifications.
+     *
+     * The value should be steadily rising. Clients are free to ignore values
+     * that are not following this rule.
+     */
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub percentage: Option<f64>,
+}
 
-    /// Set to true on the final progress update.
-    /// No more progress notifications with the same ID should be sent.
-    pub done: Option<bool>,
+#[cfg(feature = "proposed")]
+/// The `window/progress/report` notification is sent from the server to the
+/// client to report progress for a previously started progress.
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub struct ProgressReportParams {
+    /**
+     * A unique identifier to associate multiple progress notifications with
+     * the same progress.
+     */
+    pub id: Cow<'static, str>,
+
+    /**
+     * Optional, more detailed associated progress message. Contains
+     * complementary information to the `title`.
+     *
+     * Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
+     * If unset, the previous progress message (if any) is still valid.
+     */
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<Cow<'static, str>>,
+
+    /**
+     * Optional progress percentage to display (value 100 is considered 100%).
+     * If not provided infinite progress is assumed and clients are allowed
+     * to ignore the `percentage` value in subsequent in report notifications.
+     *
+     * The value should be steadily rising. Clients are free to ignore values
+     * that are not following this rule.
+     */
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub percentage: Option<f64>,
+}
+
+#[cfg(feature = "proposed")]
+/// The `window/progress/done` notification is sent from the server to the
+/// client to stop a previously started progress.
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub struct ProgressDoneParams {
+    /**
+     * A unique identifier to associate multiple progress notifications with
+     * the same progress.
+     */
+    pub id: Cow<'static, str>,
+}
+
+#[cfg(feature = "proposed")]
+/// The `window/progress/cancel` notification is sent from the client to the server to inform
+/// the server that the user has pressed the cancel button on the progress UX.
+/// A server receiving a cancel request must still close a progress using the done notification.
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub struct ProgressCancelParams {
+    /**
+     * A unique identifier to associate multiple progress notifications with
+     * the same progress.
+     */
+    pub id: Cow<'static, str>,
 }
 
 #[cfg(test)]
