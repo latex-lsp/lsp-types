@@ -39,9 +39,6 @@ use serde::de::Error as Error_;
 use serde_json::Value;
 use std::borrow::Cow;
 
-pub mod notification;
-pub mod request;
-
 /* ----------------- Auxiliary types ----------------- */
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone, Deserialize, Serialize)]
