@@ -50,7 +50,7 @@ pub enum NumberOrString {
 
 /* ----------------- Cancel support ----------------- */
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct CancelParams {
     /// The request id to cancel.
     pub id: NumberOrString,
@@ -768,7 +768,7 @@ pub type DocumentSelector = Vec<DocumentFilter>;
 
 // ========================= Actual Protocol =========================
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InitializeParams {
     /// The process Id of the parent process that started
@@ -808,7 +808,7 @@ pub struct InitializeParams {
     pub workspace_folders: Option<Vec<WorkspaceFolder>>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct InitializedParams {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
@@ -892,7 +892,7 @@ pub struct WorkspaceEditCapability {
     pub failure_handling: Option<FailureHandlingKind>,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Default, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceCapability {
     /// The server supports workspace folder.
@@ -900,7 +900,7 @@ pub struct WorkspaceCapability {
     pub workspace_folders: Option<WorkspaceFolderCapability>,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Default, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceFolderCapability {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -910,14 +910,14 @@ pub struct WorkspaceFolderCapability {
     pub change_notifications: Option<WorkspaceFolderCapabilityChangeNotifications>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum WorkspaceFolderCapabilityChangeNotifications {
     Bool(bool),
     Id(String),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceFolder {
     /// The associated URI for this workspace folder.
@@ -927,7 +927,7 @@ pub struct WorkspaceFolder {
     pub name: String,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Default, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidChangeWorkspaceFoldersParams {
     /**
@@ -939,7 +939,7 @@ pub struct DidChangeWorkspaceFoldersParams {
 /**
  * The workspace folder change event.
  */
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Default, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WorkspaceFoldersChangeEvent {
     /**
@@ -1416,13 +1416,13 @@ pub struct ClientCapabilities {
     pub experimental: Option<Value>,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 pub struct InitializeResult {
     /// The capabilities the language server provides.
     pub capabilities: ServerCapabilities,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 pub struct InitializeError {
     /// Indicates whether the client should retry to send the
     /// initilize request after showing the message provided
@@ -1475,7 +1475,7 @@ impl serde::Serialize for TextDocumentSyncKind {
 }
 
 /// Completion options.
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionOptions {
     /// The server provides support to resolve additional information for a completion item.
@@ -1488,7 +1488,7 @@ pub struct CompletionOptions {
 }
 
 /// Signature help options.
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignatureHelpOptions {
     /// The characters that trigger signature help automatically.
@@ -1497,7 +1497,7 @@ pub struct SignatureHelpOptions {
 }
 
 /// Code Lens options.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeLensOptions {
     /// Code lens has a resolve provider as well.
@@ -1506,7 +1506,7 @@ pub struct CodeLensOptions {
 }
 
 /// Format document on type options
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentOnTypeFormattingOptions {
     /// A character on which formatting should be triggered, like `}`.
@@ -1518,7 +1518,7 @@ pub struct DocumentOnTypeFormattingOptions {
 }
 
 /// Execute command options.
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 pub struct ExecuteCommandOptions {
     /// The commands to be executed on the server
     pub commands: Vec<String>,
@@ -1527,7 +1527,7 @@ pub struct ExecuteCommandOptions {
 /**
  * Save options.
  */
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SaveOptions {
     /**
@@ -1537,7 +1537,7 @@ pub struct SaveOptions {
     pub include_text: Option<bool>,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextDocumentSyncOptions {
     /**
@@ -1572,28 +1572,28 @@ pub struct TextDocumentSyncOptions {
     pub save: Option<SaveOptions>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum TextDocumentSyncCapability {
     Kind(TextDocumentSyncKind),
     Options(TextDocumentSyncOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum ImplementationProviderCapability {
     Simple(bool),
     Options(StaticTextDocumentRegistrationOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum TypeDefinitionProviderCapability {
     Simple(bool),
     Options(StaticTextDocumentRegistrationOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum ColorProviderCapability {
     Simple(bool),
@@ -1601,7 +1601,7 @@ pub enum ColorProviderCapability {
     Options(StaticTextDocumentColorProviderOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum CodeActionProviderCapability {
     Simple(bool),
@@ -1640,7 +1640,7 @@ pub struct CodeActionKindLiteralSupport {
     pub value_set: Vec<String>,
 }
 
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerCapabilities {
     /// Defines how text documents are synced.
@@ -1737,7 +1737,7 @@ pub struct ServerCapabilities {
     pub workspace: Option<WorkspaceCapability>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ShowMessageParams {
     /// The message type. See {@link MessageType}.
     #[serde(rename = "type")]
@@ -1788,7 +1788,7 @@ impl serde::Serialize for MessageType {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ShowMessageRequestParams {
     /// The message type. See {@link MessageType}
     #[serde(rename = "type")]
@@ -1802,13 +1802,13 @@ pub struct ShowMessageRequestParams {
     pub actions: Option<Vec<MessageActionItem>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct MessageActionItem {
     /// A short title like 'Retry', 'Open Log' etc.
     pub title: Cow<'static, str>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct LogMessageParams {
     /// The message type. See {@link MessageType}
     #[serde(rename = "type")]
@@ -1821,7 +1821,7 @@ pub struct LogMessageParams {
 /**
  * General parameters to to register for a capability.
  */
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Registration {
     /**
@@ -1842,14 +1842,14 @@ pub struct Registration {
     pub register_options: Option<Value>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct RegistrationParams {
     pub registrations: Vec<Registration>,
 }
 
 /// Since most of the registration options require to specify a document selector there is a base
 /// interface that can be used.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextDocumentRegistrationOptions {
     /**
@@ -1859,14 +1859,14 @@ pub struct TextDocumentRegistrationOptions {
     pub document_selector: Option<DocumentSelector>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticRegistrationOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticTextDocumentRegistrationOptions {
     /**
@@ -1879,11 +1879,11 @@ pub struct StaticTextDocumentRegistrationOptions {
     pub id: Option<String>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ColorProviderOptions {}
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StaticTextDocumentColorProviderOptions {
     /**
@@ -1899,7 +1899,7 @@ pub struct StaticTextDocumentColorProviderOptions {
 /**
  * General parameters to unregister a capability.
  */
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct Unregistration {
     /**
      * The id used to unregister the request or notification. Usually an id
@@ -1913,25 +1913,25 @@ pub struct Unregistration {
     pub method: Cow<'static, str>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct UnregistrationParams {
     pub unregisterations: Vec<Unregistration>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct DidChangeConfigurationParams {
     /// The actual changed settings
     pub settings: Value,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidOpenTextDocumentParams {
     /// The document that was opened.
     pub text_document: TextDocumentItem,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidChangeTextDocumentParams {
     /// The document that did change. The version number points
@@ -1944,7 +1944,7 @@ pub struct DidChangeTextDocumentParams {
 
 /// An event describing a change to a text document. If range and rangeLength are omitted
 /// the new text is considered to be the full content of the document.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextDocumentContentChangeEvent {
     /// The range of the document that changed.
@@ -1965,7 +1965,7 @@ pub struct TextDocumentContentChangeEvent {
  *
  * Extends TextDocumentRegistrationOptions
  */
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextDocumentChangeRegistrationOptions {
     /**
@@ -1984,7 +1984,7 @@ pub struct TextDocumentChangeRegistrationOptions {
 /**
  * The parameters send in a will save text document notification.
  */
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WillSaveTextDocumentParams {
     /**
@@ -2048,21 +2048,21 @@ impl serde::Serialize for TextDocumentSaveReason {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidCloseTextDocumentParams {
     /// The document that was closed.
     pub text_document: TextDocumentIdentifier,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DidSaveTextDocumentParams {
     /// The document that was saved.
     pub text_document: TextDocumentIdentifier,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct DidChangeWatchedFilesParams {
     /// The actual file events.
     pub changes: Vec<FileEvent>,
@@ -2110,7 +2110,7 @@ impl serde::Serialize for FileChangeType {
 }
 
 /// An event describing a file change.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct FileEvent {
     /// The file's URI.
     #[serde(with = "url_serde")]
@@ -2128,13 +2128,13 @@ impl FileEvent {
 }
 
 /// Describe options to be used when registered for text document change events.
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct DidChangeWatchedFilesRegistrationOptions {
     /// The watchers to register.
     pub watchers: Vec<FileSystemWatcher>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FileSystemWatcher {
     /// The  glob pattern to watch
@@ -2178,7 +2178,7 @@ impl serde::Serialize for WatchKind {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct PublishDiagnosticsParams {
     /// The URI for which diagnostic information is reported.
     #[serde(with = "url_serde")]
@@ -2197,14 +2197,14 @@ impl PublishDiagnosticsParams {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CompletionResponse {
     Array(Vec<CompletionItem>),
     List(CompletionList),
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionParams {
     // This field was "mixed-in" from TextDocumentPositionParams
@@ -2220,7 +2220,7 @@ pub struct CompletionParams {
     pub context: Option<CompletionContext>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionContext {
     /**
@@ -2270,7 +2270,7 @@ impl serde::Serialize for CompletionTriggerKind {
 
 /// Represents a collection of [completion items](#CompletionItem) to be presented
 /// in the editor.
-#[derive(Debug, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletionList {
     /// This list it not complete. Further typing should result in recomputing
@@ -2519,7 +2519,7 @@ impl MarkedString {
 /// Signature help represents the signature of something
 /// callable. There can be multiple signature but only one
 /// active and only one active parameter.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignatureHelp {
     /// One or more signatures.
@@ -2537,7 +2537,7 @@ pub struct SignatureHelp {
 /// Represents the signature of something callable. A signature
 /// can have a label, like a function-name, a doc-comment, and
 /// a set of parameters.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct SignatureInformation {
     /// The label of this signature. Will be shown in
     /// the UI.
@@ -2555,7 +2555,7 @@ pub struct SignatureInformation {
 
 /// Represents a parameter of a callable-signature. A parameter can
 /// have a label and a doc-comment.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ParameterInformation {
     /// The label of this parameter information.
     ///
@@ -2570,14 +2570,14 @@ pub struct ParameterInformation {
     pub documentation: Option<Documentation>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum ParameterLabel {
     Simple(String),
     LabelOffsets([u64; 2]),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ReferenceParams {
     // This field was "mixed-in" from TextDocumentPositionParams
@@ -2592,7 +2592,7 @@ pub struct ReferenceParams {
     pub context: ReferenceContext,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ReferenceContext {
     /// Include the declaration of the current symbol.
@@ -2602,7 +2602,7 @@ pub struct ReferenceContext {
 /// A document highlight is a range inside a text document which deserves
 /// special attention. Usually a document highlight is visualized by changing
 /// the background color of its range.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct DocumentHighlight {
     /// The range this highlight applies to.
     pub range: Range,
@@ -2669,14 +2669,14 @@ pub struct DocumentSymbolCapability {
     pub hierarchical_document_symbol_support: Option<bool>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DocumentSymbolResponse {
     Flat(Vec<SymbolInformation>),
     Nested(Vec<DocumentSymbol>),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentSymbolParams {
     /// The text document.
@@ -2687,7 +2687,7 @@ pub struct DocumentSymbolParams {
 /// that appear in a document. Document symbols can be hierarchical and they have two ranges:
 /// one that encloses its definition and one that points to its most interesting range,
 /// e.g. the range of an identifier.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentSymbol {
     /// The name of this symbol.
@@ -2715,7 +2715,7 @@ pub struct DocumentSymbol {
 
 /// Represents information about programming constructs like variables, classes,
 /// interfaces etc.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SymbolInformation {
     /// The name of this symbol.
@@ -2790,13 +2790,13 @@ impl serde::Serialize for SymbolKind {
 }
 
 /// The parameters of a Workspace Symbol Request.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct WorkspaceSymbolParams {
     /// A non-empty query string
     pub query: String,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ExecuteCommandParams {
     /**
      * The identifier of the actual command handler.
@@ -2812,7 +2812,7 @@ pub struct ExecuteCommandParams {
 /**
  * Execute command registration options.
  */
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ExecuteCommandRegistrationOptions {
     /**
      * The commands to be executed on the server
@@ -2820,7 +2820,7 @@ pub struct ExecuteCommandRegistrationOptions {
     pub commands: Vec<String>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ApplyWorkspaceEditParams {
     /**
      * The edits to apply.
@@ -2828,7 +2828,7 @@ pub struct ApplyWorkspaceEditParams {
     pub edit: WorkspaceEdit,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct ApplyWorkspaceEditResponse {
     /**
      * Indicates whether the edit was applied or not.
@@ -2837,7 +2837,7 @@ pub struct ApplyWorkspaceEditResponse {
 }
 
 /// Params for the CodeActionRequest
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeActionParams {
     /// The document in which the command was invoked.
@@ -2851,7 +2851,7 @@ pub struct CodeActionParams {
 }
 
 /// response for CodeActionRequest
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum CodeActionResponse {
     Commands(Vec<Command>),
@@ -2925,7 +2925,7 @@ pub mod code_action_kind {
     pub const SOURCE_ORGANIZE_IMPORTS: &'static str = "source.organizeImports";
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 pub struct CodeAction {
     /// A short, human-readable, title for this code action.
     pub title: Cow<'static, str>,
@@ -2952,7 +2952,7 @@ pub struct CodeAction {
 
 /// Contains additional diagnostic information about the context in which
 /// a code action is run.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct CodeActionContext {
     /// An array of diagnostics.
     pub diagnostics: Vec<Diagnostic>,
@@ -2965,7 +2965,7 @@ pub struct CodeActionContext {
     pub only: Option<Vec<String>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeActionOptions {
     /**
@@ -2978,7 +2978,7 @@ pub struct CodeActionOptions {
     pub code_action_kinds: Option<Vec<String>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeLensParams {
     /// The document to request code lens for.
@@ -3005,7 +3005,7 @@ pub struct CodeLens {
     pub data: Option<Value>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentLinkParams {
     /**
@@ -3018,7 +3018,7 @@ pub struct DocumentLinkParams {
  * A document link is a range in a text document that links to an internal or external resource, like another
  * text document or a web site.
  */
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct DocumentLink {
     /**
      * The range this link applies to.
@@ -3031,7 +3031,7 @@ pub struct DocumentLink {
     pub target: Uri,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentFormattingParams {
     /// The document to format.
@@ -3042,7 +3042,7 @@ pub struct DocumentFormattingParams {
 }
 
 /// Value-object describing what options formatting should use.
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FormattingOptions {
     /// Size of a tab in spaces.
@@ -3056,7 +3056,7 @@ pub struct FormattingOptions {
     pub properties: HashMap<String, FormattingProperty>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum FormattingProperty {
     Bool(bool),
@@ -3064,7 +3064,7 @@ pub enum FormattingProperty {
     String(String),
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentRangeFormattingParams {
     /// The document to format.
@@ -3077,7 +3077,7 @@ pub struct DocumentRangeFormattingParams {
     pub options: FormattingOptions,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentOnTypeFormattingParams {
     /// The document to format.
@@ -3094,7 +3094,7 @@ pub struct DocumentOnTypeFormattingParams {
 }
 
 /// Extends TextDocumentRegistrationOptions
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentOnTypeFormattingRegistrationOptions {
     /**
@@ -3115,7 +3115,7 @@ pub struct DocumentOnTypeFormattingRegistrationOptions {
     pub more_trigger_character: Option<Vec<char>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RenameParams {
     /// The document to format.
@@ -3130,14 +3130,14 @@ pub struct RenameParams {
     pub new_name: String,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum RenameProviderCapability {
     Simple(bool),
     Options(RenameOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RenameOptions {
     /// Renames should be checked and tested before being executed.
@@ -3157,7 +3157,7 @@ pub struct RenameCapability {
     pub prepare_support: Option<bool>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentLinkOptions {
     /// Document links have a resolve provider as well.
@@ -3165,21 +3165,21 @@ pub struct DocumentLinkOptions {
     pub resolve_provider: Option<bool>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum PrepareRenameResponse {
     Range(Range),
     RangeWithPlaceholder { range: Range, placeholder: String },
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentColorParams {
     /// The text document
     pub text_document: TextDocumentIdentifier,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ColorInformation {
     /**
@@ -3192,7 +3192,7 @@ pub struct ColorInformation {
     pub color: Color,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     /**
@@ -3213,7 +3213,7 @@ pub struct Color {
     pub alpha: f64,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ColorPresentationParams {
     /**
@@ -3258,14 +3258,14 @@ pub struct ColorPresentation {
     pub additional_text_edits: Option<Vec<TextEdit>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FoldingRangeParams {
     /// The text document.
     pub text_document: TextDocumentIdentifier,
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum FoldingRangeProviderCapability {
     Simple(bool),
@@ -3273,7 +3273,7 @@ pub enum FoldingRangeProviderCapability {
     Options(StaticTextDocumentColorProviderOptions),
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 pub struct FoldingProviderOptions {}
 
 #[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
@@ -3304,7 +3304,7 @@ pub struct FoldingRangeCapability {
 /**
  * Represents a folding range.
  */
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FoldingRange {
     /**
@@ -3339,7 +3339,7 @@ pub struct FoldingRange {
 }
 
 /// A parameter literal used in selection range requests.
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[cfg(feature = "proposed")]
 pub struct SelectionRangeParams {
@@ -3350,7 +3350,7 @@ pub struct SelectionRangeParams {
 }
 
 /// Represents a selection range.
-#[derive(Debug, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[cfg(feature = "proposed")]
 pub struct SelectionRange {
